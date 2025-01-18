@@ -20,28 +20,42 @@
 //      chỉ gọi lại callback mỗi khi deps thay đổi
 //      ------------------------------------------
 //      Callback sẽ luôn được gọi sau componet mounted
-//      Gọi callback sau khi component đc gắn vào DOM(tức là DOM thực hiện xong callback mới gọi)
+//      Gọi callback sau khi component đc gắn vào DOM(tức là DOM thực hiện xong callback mới đc thực hiện)
 import { useEffect,useState } from "react";
 import React from "react";
+//const tabs=['posts','comments','albums']
+const tabs=['posts','comments','albums']
 function Content(){
-   const [title,setTitle] =useState('')
-   const [posts,setPosts] =useState([])       
-   useEffect(()=>{
-      fetch('https://jsonplaceholder.typicode.com/posts')
-      .then(res=>res.json())
-      .then((res)=>{setPosts(res)})   
-      },[])
-      //Nếu chỗ đây nó ko có deps là mảng rỗng thì nó sẽ gọi vô hạn callback
-         return <div>
-                 <input 
-                     value={title} 
-                     onChange={(e)=>setTitle(e.target.value)}
-                     />
-                 <ul>
-                     {posts.map((post)=>{
-                        return <li key={post.id}>{post.title}</li>
-                     })}
-                 </ul>
-                 </div>
-     }
+      
+     const [title,setTitle] =useState('')
+     const[posts,setPosts] =useState([])
+     const[types,setType] =useState('posts')
+     
+     useEffect(()=>{
+        fetch(`https://jsonplaceholder.typicode.com/${types}`)
+        .then(res=>res.json())
+        .then((res)=>{setPosts(res)})
+                },[types])
+    return <div>
+             {tabs.map((tab)=> 
+                                <button 
+                                     key={tab} 
+                                     style={tab === types ? {
+                                        color :'#fff',
+                                        backgroundColor:'#333'
+                                     } :{}} 
+                                     onClick={()=>setType(tab)}>
+
+                                {tab}</button> )}
+            <input 
+                value={title} 
+                onChange={(e)=>setTitle(e.target.value)}
+                />
+            <ul>
+                {posts.map((post)=>{
+                   return <li key={post.id}>{post.title ||post.name}</li>
+                })}
+            </ul>
+            </div>
+}
 export default Content;
